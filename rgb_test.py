@@ -9,3 +9,5 @@ if __name__ =='__main__':
    print("Shape:",rgb_img.shape)
    
    cv2.imshow("Color",rgb_img)
+   cv2.waitKey()
+   cv2.destroyAllWindows()

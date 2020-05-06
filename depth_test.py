@@ -16,3 +16,5 @@ if __name__ =='__main__':
    print("Shape:",depth_img.shape) 
    
    cv2.imshow("Depth",depth_img)
+   cv2.waitKey()
+   cv2.destroyAllWindows()
