@@ -31,8 +31,20 @@ if __name__=='__main__':
     depth_path=base_dir+y_line[1]
     img=cv2.imread(img_path)
     depth=cv2.imread(depth_path)
-
+    
+    fx = 525.0  # focal length x
+    fy = 525.0  # focal length y
+    cx = 319.5  # optical center x
+    cy = 239.5  # optical center y
+    
+    factor = 5000 # for the 16-bit PNG files
+    
+    coords=np.zeros((480,640,3))
     for y in range(480):
         for x in range(640):
-            a=img[y,x]
-    print("done")
+            Z=depth(y,x)/factor
+            X=(x-cx)*Z/fx
+            Y=(y-cy)*Z/fy
+            coords[y,x,:]=np.array([X,Y,Z])
+            
+            
