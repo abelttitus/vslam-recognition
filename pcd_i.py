@@ -27,6 +27,7 @@ if __name__=='__main__':
     # img=cv2.imread(img_path)
     depth=cv2.imread(depth_path)
     
+    print("Depth Shape",depth.shape)
     if depth.size==0:
         print("Image reading Mistake")
     fx = 481.20  # focal length x
