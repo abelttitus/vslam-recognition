@@ -43,11 +43,14 @@ if __name__=='__main__':
     
     coords=np.zeros((480,640,3))
     coords.astype(np.float32)
+    count=0
     for y in range(480):
         for x in range(640):
             coords[y,x,2]=float(depth[y,x,0])/factor
             Z=coords[y,x,2]
             coords[y,x,1]=(x-cx)*Z/fx
             coords[y,x,0]=(y-cy)*Z/fy
-    print(np.unique(coords))      
-    print(np.unique(depth))
+            if(Z!=0.0):
+                count=count+1;
+    
+    print('{}/307200',count)
