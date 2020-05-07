@@ -31,5 +31,8 @@ if __name__=='__main__':
     depth_path=base_dir+y_line[1]
     img=cv2.imread(img_path)
     depth=cv2.imread(depth_path)
-    print(img.shape)
-    print(depth.shape)
+
+    for y in range(480):
+        for x in range(640):
+            a=img[y,x]
+    print("done")
