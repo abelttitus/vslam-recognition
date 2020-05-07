@@ -43,14 +43,16 @@ if __name__=='__main__':
     
     coords=np.zeros((480,640,3))
     coords.astype(np.float32)
-    count=0
     for y in range(480):
         for x in range(640):
             coords[y,x,2]=float(depth[y,x,0])/factor
             Z=coords[y,x,2]
             coords[y,x,1]=(x-cx)*Z/fx
             coords[y,x,0]=(y-cy)*Z/fy
-            if(Z!=0.0):
-                count=count+1;
-    
-    print('{}/307200',count)
+            
+    vertices=np.reshape(coords,(307200,3))
+    pcd=o3d.geometry.PointCloud()
+    pcd.points=o3d.utility.Vector3dVector(vertices)
+    o3d.io.write_point_cloud('/home/abel/vslam-recognition/pcd.ply', pcd)
+    o3d.visualization.draw_geometries([pcd])
+   
