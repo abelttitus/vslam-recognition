@@ -39,8 +39,8 @@ if __name__=='__main__':
 
     if(sys.argv[1]=='depth'):
         depth_file_path='/home/abel/rgbd_dataset_freiburg1_xyz/depth.txt'
-        depth_file=open(depth_file_path,'rt')
-        for line in depth_file:
+        d_file=open(depth_file_path,'rt')
+        for line in d_file:
             if line[0]=='#':
                 continue
             content = line.split()
@@ -59,4 +59,4 @@ if __name__=='__main__':
         cv2.imshow("Depth",depth_img)
         cv2.waitKey()
         cv2.destroyAllWindows()
-        depth_file.close()
+        d_file.close()
