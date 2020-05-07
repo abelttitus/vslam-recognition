@@ -50,4 +50,5 @@ if __name__=='__main__':
     pcd=o3d.geometry.PointCloud()
     pcd.points=o3d.utility.Vector3dVector(vertices)
     o3d.io.write_point_cloud('/home/abel/vslam-recognition/pcd_i.ply', pcd)
-    o3d.visualization.draw_geometries([pcd])
+    print(np.unique((vertices)))
+   # o3d.visualization.draw_geometries([pcd])
