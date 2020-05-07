@@ -24,6 +24,8 @@ if __name__=='__main__':
             img_file=content[1]
             break
         img_dir='/home/abel/rgbd_dataset_freiburg1_xyz/'
+        img_file=img_dir+img_file
+        print(img_file)
         rgb_img=cv2.imread(img_file)
         print('Timestamp:',time)
         print("Max Value:",np.max(rgb_img))
@@ -47,6 +49,7 @@ if __name__=='__main__':
             break
         depth_dir='/home/abel/rgbd_dataset_freiburg1_xyz/'
         depth_file=depth_dir+depth_file
+        print(depth_file)
         depth_img=cv2.imread(depth_file)
         print('Timestamp:',time)
         print("Max Value:",np.max(depth_img))
