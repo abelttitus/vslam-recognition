@@ -25,6 +25,7 @@ if __name__=='__main__':
             break
         img_dir='/home/abel/rgbd_dataset_freiburg1_xyz/rgb/'
         img_file=str(img_dir+img_file)
+        print(img_file)
         rgb_img=cv2.imread(img_file)
         print('Timestamp:',time)
         print("Max Value:",np.max(rgb_img))
