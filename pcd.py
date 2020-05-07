@@ -42,7 +42,7 @@ if __name__=='__main__':
     coords=np.zeros((480,640,3))
     for y in range(480):
         for x in range(640):
-            coords[y,x,2]=depth[y,x]/factor
+            coords[y,x,2]=depth[y,x,0]/factor
             Z=coords[y,x,2]
             coords[y,x,1]=(x-cx)*Z/fx
             coords[y,x,0]=(y-cy)*Z/fy
