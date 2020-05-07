@@ -9,6 +9,7 @@ Created on Thu May  7 12:15:54 2020
 
 import numpy as np
 import cv2
+import pickle
 
 if __name__=='__main__':
     verbose=True;
@@ -46,6 +47,9 @@ if __name__=='__main__':
             Z=coords[y,x,2]
             coords[y,x,1]=(x-cx)*Z/fx
             coords[y,x,0]=(y-cy)*Z/fy
+    db_file=open('coords','ab')
+    pickle.dump(coords,db_file)
+    db_file.close()
             
             
             
