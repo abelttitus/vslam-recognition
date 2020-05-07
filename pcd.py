@@ -34,7 +34,11 @@ if __name__=='__main__':
     depth=cv2.imread(depth_path)
     
     cv2.imshow('Color',img)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
     cv2.imshow('Depth',depth)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
 # =============================================================================
 #     fx = 525.0  # focal length x
 #     fy = 525.0  # focal length y
