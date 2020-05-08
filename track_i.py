@@ -61,7 +61,11 @@ if __name__=='__main__':
             vertices=np.reshape(coords,(307200,3))
             
             pcds.append(vertices)
-        
+            
+
+            pcd=o3d.geometry.PointCloud()
+            pcd.points=o3d.utility.Vector3dVector(vertices)
+            o3d.io.write_point_cloud('/home/abel/vslam-recognition/pcd_'+str(img_no)+'.ply', pcd)
             if verbose:
                 print("Length of pcds after appending ",img_no, "is",len(pcds))
                 print("Shape of ",img_no,pcds[img_no].shape)
@@ -70,19 +74,19 @@ if __name__=='__main__':
             if img_no==2:
                 break
     
-    init_pose=np.identity(4)
-    start=time.monotonic()
-    Res_inv,_,_=icp(pcds[0],pcds[1],init_pose) #from A to B
-    Res=np.linalg.inv(Res_inv)  #from B to A
-    end=time.monotonic()
-    r=R.from_matrix(Res[:3,:3])
-    print("Time Elapsed:",end-start,"img_no:",0,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
-    start=time.monotonic()
-    Res_inv,_,_=icp(pcds[0],pcds[2],Res_inv)
-    Res=np.linalg.inv(Res_inv)  #from B to A
-    end=time.monotonic()
-    r=R.from_matrix(Res[:3,:3])
-    print("Time Elapsed:",end-start,"img_no:",1,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
+    # init_pose=np.identity(4)
+    # start=time.monotonic()
+    # Res_inv,_,_=icp(pcds[0],pcds[1],init_pose) #from A to B
+    # Res=np.linalg.inv(Res_inv)  #from B to A
+    # end=time.monotonic()
+    # r=R.from_matrix(Res[:3,:3])
+    # print("Time Elapsed:",end-start,"img_no:",0,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
+    # start=time.monotonic()
+    # Res_inv,_,_=icp(pcds[0],pcds[2],Res_inv)
+    # Res=np.linalg.inv(Res_inv)  #from B to A
+    # end=time.monotonic()
+    # r=R.from_matrix(Res[:3,:3])
+    # print("Time Elapsed:",end-start,"img_no:",1,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
     
    
     
