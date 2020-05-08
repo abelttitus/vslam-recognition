@@ -22,10 +22,9 @@ if __name__=='__main__':
     factor = 5000.0 # for the 16-bit PNG files
     coords=np.zeros((480,640,3))
     coords.astype(np.float32)
-    pcds=[0]
+    pcds=[]
     
-    if verbose:
-        print("Inital len of pcds",len(pcds))
+
     with open('/home/abel/dataset/associations.txt') as file: 
         for line in file:
             contents=line.split()
@@ -34,7 +33,7 @@ if __name__=='__main__':
                 print("File (Depth):",contents[1])
                 print("File (RGB)",contents[2])
             
-            img_no=contents[0]
+            img_no=int(contents[0])
             img_path=base_dir+contents[2]
             depth_path=base_dir+contents[1]
             # img=cv2.imread(img_path)
@@ -59,7 +58,8 @@ if __name__=='__main__':
         
             if verbose:
                 print("Length of pcds after appending ",img_no, "is",len(pcds))
-                print("Unique of ",img_no,pcds[img_no].shape)
+                print("Shape of ",img_no,pcds[img_no].shape)
+                print("Unique in pcds",img_no,np.unique(pcds[img_no]))
         
             if img_no==2:
                 break
