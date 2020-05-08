@@ -13,7 +13,7 @@ import open3d as o3d
 from icp import *
 
 if __name__=='__main__':
-    verbose=True;
+    verbose=False;
     base_dir='/home/abel/dataset/'
     fx = 481.20  # focal length x
     fy = -480.00  # focal length y
@@ -31,10 +31,10 @@ if __name__=='__main__':
             if verbose:
                 print("Image Number:",contents[0])
                 print("File (Depth):",contents[1])
-                print("File (RGB)",contents[2])
+                print("File (RGB)",contents[3])
             
             img_no=int(contents[0])
-            img_path=base_dir+contents[2]
+            img_path=base_dir+contents[3]
             depth_path=base_dir+contents[1]
             # img=cv2.imread(img_path)
             depth=cv2.imread(depth_path)
@@ -63,4 +63,8 @@ if __name__=='__main__':
         
             if img_no==2:
                 break
+    
+    init_pose=np.identity(4)
+    R,_,_=icp(pcds[0],pcds[1],init_pose)
+    print("Pose A B",R)
     
