@@ -13,6 +13,7 @@ import open3d as o3d
 from icp import *
 from scipy.spatial.transform import Rotation as R
 import time 
+import math
 
 if __name__=='__main__':
     verbose=False;
@@ -49,8 +50,11 @@ if __name__=='__main__':
     
             for y in range(480):
                 for x in range(640):
-                    coords[y,x,2]=float(depth[y,x,0])/factor
-                    Z=coords[y,x,2]
+                    d=float(depth[y,x,0])/factor
+                    x1=x-cx
+                    y1=cy-y
+                    Z=fx*math.sqrt(d**2/(x1**2+y1**2+fx**2))
+                    coords[y,x,2]=Z
                     coords[y,x,1]=(x-cx)*Z/fx
                     coords[y,x,0]=(y-cy)*Z/fy
                     
