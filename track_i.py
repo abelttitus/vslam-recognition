@@ -68,12 +68,14 @@ if __name__=='__main__':
     
     init_pose=np.identity(4)
     start=time.monotonic()
-    Res,_,_=icp(pcds[0],pcds[1],init_pose)
+    Res_inv,_,_=icp(pcds[0],pcds[1],init_pose) #from A to B
+    Res=np.linalg.inv(Res_inv)  #from B to A
     end=time.monotonic()
     r=R.from_matrix(Res[:3,:3])
     print("Time Elapsed:",end-start,"img_no:",0,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
     start=time.monotonic()
-    Res,_,_=icp(pcds[0],pcds[2],Res)
+    Res_inv,_,_=icp(pcds[0],pcds[2],Res_inv)
+    Res=np.linalg.inv(Res_inv)  #from B to A
     end=time.monotonic()
     r=R.from_matrix(Res[:3,:3])
     print("Time Elapsed:",end-start,"img_no:",1,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
