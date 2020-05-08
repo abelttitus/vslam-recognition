@@ -11,6 +11,8 @@ import numpy as np
 import cv2
 import open3d as o3d
 from icp import *
+from scipy.spatial.transform import Rotation as R
+import time 
 
 if __name__=='__main__':
     verbose=False;
@@ -65,6 +67,16 @@ if __name__=='__main__':
                 break
     
     init_pose=np.identity(4)
-    R,_,_=icp(pcds[0],pcds[1],init_pose)
-    print("Pose A B",R)
+    start=time.monotonic()
+    Res,_,_=icp(pcds[0],pcds[1],init_pose)
+    end=time.monotonic()
+    r=R.from_matrix(Res[:3,:3])
+    print("Time Elapsed:",end-start,"img_no:",0,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
+    start=time.monotonic()
+    Res,_,_=icp(pcds[0],pcds[2],Res)
+    end=time.monotonic()
+    r=R.from_matrix(Res[:3,:3])
+    print("Time Elapsed:",end-start,"img_no:",1,"Result",Res[0,3],Res[1,3],Res[2,3],r.as_quat())
+    
+   
     
