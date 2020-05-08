@@ -10,6 +10,7 @@ Created on Thu May  7 21:04:49 2020
 import numpy as np
 import cv2
 import open3d as o3d
+from icp import *
 
 if __name__=='__main__':
     verbose=True;
