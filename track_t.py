@@ -51,6 +51,7 @@ def generate_pointcloud(rgb_file,depth_file):
             
             temp=np.array([[X,Y,Z]])
             vertices=np.concatenate([vertices,temp])
+            print(v,u)
 
     
     return vertices
