@@ -85,7 +85,7 @@ if __name__=='__main__':
     img_path=base_dir+x_line[1]
     depth_path=base_dir+y_line[1]
 
-    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_t_2')
+    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_t_2.ply')
     
     
 
