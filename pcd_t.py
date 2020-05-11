@@ -10,7 +10,61 @@ Created on Thu May  7 12:15:54 2020
 import numpy as np
 import cv2
 import open3d as o3d
+from PIL import Image
 
+focalLength = 525.0
+centerX = 319.5
+centerY = 239.5
+scalingFactor = 5000.0
+
+
+def generate_pointcloud(rgb_file,depth_file,ply_file):
+    """
+    Generate a colored point cloud in PLY format from a color and a depth image.
+    
+    Input:
+    rgb_file -- filename of color image
+    depth_file -- filename of depth image
+    ply_file -- filename of ply file
+    
+    """
+    rgb = Image.open(rgb_file)
+    depth = Image.open(depth_file)
+    
+    if rgb.size != depth.size:
+        raise Exception("Color and depth image do not have the same resolution.")
+    if rgb.mode != "RGB":
+        raise Exception("Color image is not in RGB format")
+    if depth.mode != "I":
+        raise Exception("Depth image is not in intensity format")
+
+
+    points = []    
+    for v in range(rgb.size[1]):
+        for u in range(rgb.size[0]):
+            color = rgb.getpixel((u,v))
+            Z = depth.getpixel((u,v)) / scalingFactor
+            if Z==0: continue
+            X = (u - centerX) * Z / focalLength
+            Y = (v - centerY) * Z / focalLength
+            points.append("%f %f %f %d %d %d 0\n"%(X,Y,Z,color[0],color[1],color[2]))
+    file = open(ply_file,"w")
+    file.write('''ply
+format ascii 1.0
+element vertex %d
+property float x
+property float y
+property float z
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+end_header
+%s
+'''%(len(points),"".join(points)))
+    file.close()
+    
+    
 if __name__=='__main__':
     verbose=True;
     with open('/home/abel/rgbd_dataset_freiburg1_xyz/depth.txt') as d_file, open('/home/abel/rgbd_dataset_freiburg1_xyz/rgb.txt') as rgb_file: 
@@ -30,29 +84,10 @@ if __name__=='__main__':
     base_dir='/home/abel/rgbd_dataset_freiburg1_xyz/'
     img_path=base_dir+x_line[1]
     depth_path=base_dir+y_line[1]
-    img=cv2.imread(img_path)
-    depth=cv2.imread(depth_path)
+
+    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_t_2')
+    
     
 
-    fx = 525.0  # focal length x
-    fy = 525.0  # focal length y
-    cx = 319.5  # optical center x
-    cy = 239.5  # optical center y
-    
-    factor = 5000.0 # for the 16-bit PNG files
-    
-    coords=np.zeros((480,640,3))
-    coords.astype(np.float32)
-    for y in range(480):
-        for x in range(640):
-            coords[y,x,2]=float(depth[y,x,0])/factor
-            Z=coords[y,x,2]
-            coords[y,x,1]=(x-cx)*Z/fx
-            coords[y,x,0]=(y-cy)*Z/fy
-            
-    vertices=np.reshape(coords,(307200,3))
-    pcd=o3d.geometry.PointCloud()
-    pcd.points=o3d.utility.Vector3dVector(vertices)
-    o3d.io.write_point_cloud('/home/abel/vslam-recognition/pcd.ply', pcd)
-    o3d.visualization.draw_geometries([pcd])
+ 
    
