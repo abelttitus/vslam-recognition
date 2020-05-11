@@ -81,3 +81,6 @@ if __name__=='__main__':
 
     coords=generate_pointcloud(img_path,depth_path)
     print("PCD Shape:",coords.shape)
+    pcd=o3d.geometry.PointCloud()
+    pcd.points=o3d.utility.Vector3dVector(coords)
+    o3d.io.write_point_cloud('/home/abel/vslam-recognition/pcd_t_track.ply', pcd)
