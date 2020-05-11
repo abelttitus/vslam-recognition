@@ -54,7 +54,7 @@ def generate_pointcloud(rgb_file,depth_file):
             points[v,u,2]=Z
             valid[v*rgb.size[1]+u]=True
 
-    vertices=np.reshape(points(rgb.size[1]*rgb.size[0],3))
+    vertices=np.reshape(points,(rgb.size[1]*rgb.size[0],3))
     
     return vertices[valid]
 
