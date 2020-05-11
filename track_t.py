@@ -39,8 +39,9 @@ def generate_pointcloud(rgb_file,depth_file):
         raise Exception("Depth image is not in intensity format")
 
 
-   
-    vertices=np.array([[0,0,0]])
+    points = np.zeros((rgb.size[1],rgb.size[0],3))
+    valid=np.zeros((rgb.size[1]*rgb.size[0]),dtype=bool)
+    
     for v in range(rgb.size[1]):
         for u in range(rgb.size[0]):
             color = rgb.getpixel((u,v))
@@ -48,13 +49,14 @@ def generate_pointcloud(rgb_file,depth_file):
             if Z==0: continue
             X = (u - centerX) * Z / focalLength
             Y = (v - centerY) * Z / focalLength
-            
-            temp=np.array([[X,Y,Z]])
-            vertices=np.concatenate([vertices,temp])
-            print(v,u)
+            points[v,u,0]=X
+            points[v,u,1]=Y
+            points[v,u,2]=Z
+            valid[v*rgb.size[1]+u]=True
 
+    vertices=np.reshape(points(rgb.size[1]*rgb.size[0],3))
     
-    return vertices
+    return vertices[valid]
 
 
 if __name__=='__main__':
@@ -78,4 +80,4 @@ if __name__=='__main__':
     depth_path=base_dir+y_line[1]
 
     coords=generate_pointcloud(img_path,depth_path)
-    print("Shape of PCD",coords.shape)
+    print("PCD Shape:",coords.shape)
