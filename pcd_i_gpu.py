@@ -13,7 +13,13 @@ import open3d as o3d
 from icp import *
 from PIL import Image
 import time
-from numba import njit
+
+
+import pycuda.driver as cuda
+import pycuda.autoinit
+from pycuda.compiler import SourceModule
+import pycuda.gpuarray as gpuarray
+
 
 fx = 481.20  # focal length x
 fy = -480.00  # focal length y
@@ -21,17 +27,6 @@ cx = 319.50  # optical center x
 cy = 239.50 # optical center y
 scalingFactor = 5000.0
 
-@njit
-def gen_vmap(rgb,depth):
-    #points = []    
-    for v in range(rgb.shape[0]):
-        for u in range(rgb.shape[1]):
-            color = rgb[v,u,:]
-            Z = depth[v,u,0]/ scalingFactor
-            if Z==0: continue
-            X = (u - cx) * Z / fx
-            Y = (v - cy) * Z / fy
-            #points.append("%f %f %f %d %d %d 0\n"%(X,Y,Z,color[0],color[1],color[2]))
     
 def generate_pointcloud(rgb_file,depth_file,ply_file):
     """
@@ -45,6 +40,9 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     """
     rgb = cv2.imread(rgb_file)
     depth = cv2.imread(depth_file)
+    depth=depth.astype(np.float32)
+    points=np.zeros((depth.shape[0],depth.shape[1],3))
+    points=points.astype(np.float32)
     
     if rgb.shape != depth.shape:
         raise Exception("Color and depth image do not have the same resolution.")
@@ -53,8 +51,41 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     # if depth.mode != "I":
     #     raise Exception("Depth image is not in intensity format")
 
-
-    points=gen_vmap(rgb,depth)
+    depth_gpu=gpuarray.to_gpu(depth)
+   # points_gpu=gpuarray.to_gpu(points)
+    
+    
+    
+    mod=SourceModule("""
+                     __global__ void vmap_kernel(float* depth){
+                       int u = threadIdx.x + blockIdx.x * blockDim.x;
+                       int v = threadIdx.y + blockIdx.y * blockDim.y; 
+                       
+                       int cols=640;
+                       int rows=480;
+                       float scaling_factor=5000.0;
+                       float depthCutoff=20.0f;
+                       float cx=319.50;
+                       float cy=239.50;
+                       float fx_inv=1/481.20;
+                       float fy_inv=-1/480.00;
+                       
+                       if(u<cols && v<rows){
+                               float z= depth[u+cols*v]/scaling_factor;
+                               if(z!=0 && z<depthCutoff){
+                                       float vx = z * (u - cx) * fx_inv;
+                                        float vy = z * (v - cy) * fy_inv;
+                                        float vz = z;
+                                        
+                                        
+                               }
+                       }
+                       }""")
+                
+    function=mod.get_function("vmap_kernel");
+    function(depth_gpu,block=(32,8,1),grid(20,60,1))
+    
+    #points=gen_vmap(rgb,depth)
 #     file = open(ply_file,"w")
 #     file.write('''ply
 # format ascii 1.0
