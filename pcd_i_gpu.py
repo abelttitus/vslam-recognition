@@ -21,7 +21,7 @@ cx = 319.50  # optical center x
 cy = 239.50 # optical center y
 scalingFactor = 5000.0
 
-@njit
+@njit(parallel=True)
 def gen_vmap(rgb,depth):
     points = []    
     for v in range(rgb.shape[0]):
@@ -31,7 +31,7 @@ def gen_vmap(rgb,depth):
             if Z==0: continue
             X = (u - cx) * Z / fx
             Y = (v - cy) * Z / fy
-            points.append("%f %f %f %d %d %d 0\n"%(X,Y,Z,color[0],color[1],color[2]))
+            #points.append("%f %f %f %d %d %d 0\n"%(X,Y,Z,color[0],color[1],color[2]))
     
 def generate_pointcloud(rgb_file,depth_file,ply_file):
     """
@@ -55,21 +55,21 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
 
 
     points=gen_vmap(rgb,depth)
-    file = open(ply_file,"w")
-    file.write('''ply
-format ascii 1.0
-element vertex %d
-property float x
-property float y
-property float z
-property uchar red
-property uchar green
-property uchar blue
-property uchar alpha
-end_header
-%s
-'''%(len(points),"".join(points)))
-    file.close()
+#     file = open(ply_file,"w")
+#     file.write('''ply
+# format ascii 1.0
+# element vertex %d
+# property float x
+# property float y
+# property float z
+# property uchar red
+# property uchar green
+# property uchar blue
+# property uchar alpha
+# end_header
+# %s
+# '''%(len(points),"".join(points)))
+#     file.close()
     
 
 
