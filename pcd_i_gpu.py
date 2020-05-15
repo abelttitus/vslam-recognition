@@ -43,7 +43,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     ply_file -- filename of ply file
     
     """
-    rgb = cv2.imread(rgb_file,mode='RGB')
+    rgb = cv2.imread(rgb_file)
     depth = cv2.imread(depth_file)
     
     if rgb.shape != depth.shape:
