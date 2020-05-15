@@ -52,8 +52,8 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     #     raise Exception("Depth image is not in intensity format")
 
     depth_gpu=gpuarray.to_gpu(depth)
-    points_gpu=gpuarray.to_gpu(points)
-    
+    points_gpu=cuda.mem_alloc(points.nbytes)
+    cuda.memcpy_htod(points_gpu,points)
     
     
     mod=SourceModule("""
@@ -88,6 +88,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                 
     function=mod.get_function("vmap_kernel");
     function(depth_gpu,points_gpu,block=(32,8,1),grid=(20,60,1))
+    cuda.memcpy_dtoh(points,points_gpu)
     print(np.unique(points_gpu))
     #points=gen_vmap(rgb,depth)
 #     file = open(ply_file,"w")
