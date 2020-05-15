@@ -23,7 +23,7 @@ scalingFactor = 5000.0
 
 @njit(parallel=True)
 def gen_vmap(rgb,depth):
-    points = []    
+    #points = []    
     for v in range(rgb.shape[0]):
         for u in range(rgb.shape[1]):
             color = rgb[v,u,:]
