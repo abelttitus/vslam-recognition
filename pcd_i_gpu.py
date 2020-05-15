@@ -68,7 +68,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                      __global__ void vmap_kernel(float* depth,float* points,float* count){
                        int u = threadIdx.x + blockIdx.x * blockDim.x;
                        int v = threadIdx.y + blockIdx.y * blockDim.y; 
-                       
+                       count[0]+=1;
                        int cols=640;
                        int rows=480;
                        float scaling_factor=5000.0;
@@ -88,7 +88,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                                         points[u+cols*v]=vx;
                                         points[u+cols*v+1]=vy;
                                         points[u+cols*v+2]=vz;
-                                        count[0]+=1;
+                                        
                                         
                                }
                        }
