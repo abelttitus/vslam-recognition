@@ -89,7 +89,11 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     function=mod.get_function("vmap_kernel");
     function(depth_gpu,points_gpu,block=(32,8,1),grid=(20,60,1))
     cuda.memcpy_dtoh(points,points_gpu)
-    print(points.shape)
+    
+    pcd_color=np.concatenate([points,rgb])
+    pcd_color=pcd_color.reshape((640*480,6))
+    pcds=pcd_color[pcd_color[:,0]!=0.0]
+    print(pcds.shape)
 
 
 if __name__=='__main__':
