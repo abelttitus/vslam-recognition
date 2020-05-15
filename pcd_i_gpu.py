@@ -95,7 +95,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     pcds=pcd_color[pcd_color[:,0]!=0.0]
     pcd_o = o3d.geometry.PointCloud()
     pcd_o.points=o3d.utility.Vector3dVector(pcds[:,:3])
-    pcd_o.colors=o3d.utility.Vector3iVector(pcds[:,3:].astype(np.int32))
+    pcd_o.colors=o3d.utility.Vector3dVector(pcds[:,3:].astype(np.int32))
     o3d.io.write_point_cloud("/home/abel/vslam-recognition/gpu.ply", pcd_o)
 
 
