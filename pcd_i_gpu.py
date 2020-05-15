@@ -88,14 +88,14 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                                         points[u+cols*v]=vx;
                                         points[u+cols*v+1]=vy;
                                         points[u+cols*v+2]=vz;
-                                        count+=1;
+                                        count[0]+=1;
                                         
                                }
                        }
                        }""")
                 
     function=mod.get_function("vmap_kernel");
-    function(depth_gpu,points_gpu,block=(32,8,1),grid=(20,60,1))
+    function(depth_gpu,points_gpu,count_gpu,block=(32,8,1),grid=(20,60,1))
     cuda.memcpy_dtoh(points,points_gpu)
     cuda.memcpy_dtoh(count,count_gpu)
     
