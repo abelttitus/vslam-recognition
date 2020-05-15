@@ -25,7 +25,7 @@ scalingFactor = 5000.0
 def gen_vmap(rgb,depth):
     points = []    
     for v in range(rgb.shape[0]):
-        for u in range(rgb.size[1]):
+        for u in range(rgb.shape[1]):
             color = rgb[v,u,:]
             Z = depth[v,u,0]/ scalingFactor
             if Z==0: continue
