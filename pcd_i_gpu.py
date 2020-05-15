@@ -13,6 +13,7 @@ import open3d as o3d
 from icp import *
 from PIL import Image
 import time
+from numba import njit
 
 fx = 481.20  # focal length x
 fy = -480.00  # focal length y
@@ -20,7 +21,18 @@ cx = 319.50  # optical center x
 cy = 239.50 # optical center y
 scalingFactor = 5000.0
 
-
+@njit
+def gen_vmap(rgb,depth):
+    points = []    
+    for v in range(rgb.shape[0]):
+        for u in range(rgb.size[1]):
+            color = rgb[v,u,:]
+            Z = depth[v,u,0]/ scalingFactor
+            if Z==0: continue
+            X = (u - cx) * Z / fx
+            Y = (v - cy) * Z / fy
+            points.append("%f %f %f %d %d %d 0\n"%(X,Y,Z,color[0],color[1],color[2]))
+    
 def generate_pointcloud(rgb_file,depth_file,ply_file):
     """
     Generate a colored point cloud in PLY format from a color and a depth image.
@@ -31,26 +43,18 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     ply_file -- filename of ply file
     
     """
-    rgb = Image.open(rgb_file)
-    depth = Image.open(depth_file)
+    rgb = cv2.imread(rgb_file,mode='RGB')
+    depth = cv2.imread(depth_file)
     
-    if rgb.size != depth.size:
+    if rgb.shape != depth.shape:
         raise Exception("Color and depth image do not have the same resolution.")
-    if rgb.mode != "RGB":
-        raise Exception("Color image is not in RGB format")
-    if depth.mode != "I":
-        raise Exception("Depth image is not in intensity format")
+    # if rgb.mode != "RGB":
+    #     raise Exception("Color image is not in RGB format")
+    # if depth.mode != "I":
+    #     raise Exception("Depth image is not in intensity format")
 
 
-    points = []    
-    for v in range(rgb.size[1]):
-        for u in range(rgb.size[0]):
-            color = rgb.getpixel((u,v))
-            Z = depth.getpixel((u,v)) / scalingFactor
-            if Z==0: continue
-            X = (u - cx) * Z / fx
-            Y = (v - cy) * Z / fy
-            points.append("%f %f %f %d %d %d 0\n"%(X,Y,Z,color[0],color[1],color[2]))
+    points=gen_vmap(rgb,depth)
     file = open(ply_file,"w")
     file.write('''ply
 format ascii 1.0
