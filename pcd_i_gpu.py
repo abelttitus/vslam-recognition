@@ -88,7 +88,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                 
     function=mod.get_function("vmap_kernel");
     function(depth_gpu,points_gpu,block=(32,8,1),grid=(20,60,1))
-    print(np.unique(points))
+    print(np.unique(points_gpu))
     #points=gen_vmap(rgb,depth)
 #     file = open(ply_file,"w")
 #     file.write('''ply
