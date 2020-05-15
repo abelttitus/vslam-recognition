@@ -21,7 +21,7 @@ cx = 319.50  # optical center x
 cy = 239.50 # optical center y
 scalingFactor = 5000.0
 
-@njit(parallel=True)
+@njit
 def gen_vmap(rgb,depth):
     #points = []    
     for v in range(rgb.shape[0]):
