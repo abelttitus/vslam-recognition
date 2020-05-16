@@ -56,7 +56,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     #     raise Exception("Depth image is not in intensity format")
 
     depth_gpu=gpuarray.to_gpu(depth)
-    count=np.asarray([0.0],dtype=np.float32)
+    count=np.zeros((480,640,1),dtype=np.float32)
     points_gpu=cuda.mem_alloc(points.nbytes)
     count_gpu=cuda.mem_alloc(count.nbytes)
     
@@ -68,7 +68,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                      __global__ void vmap_kernel(float* depth,float* points,float* count){
                        int u = threadIdx.x + blockIdx.x * blockDim.x;
                        int v = threadIdx.y + blockIdx.y * blockDim.y; 
-                       count[0]+=1;
+                       
                        int cols=640;
                        int rows=480;
                        float scaling_factor=5000.0;
@@ -79,6 +79,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                        float fy_inv=-1/480.00;
                        
                        if(u<cols && v<rows){
+                               count[u+cols*v]=1.0;
                                float z= depth[u+cols*v]/scaling_factor;
                                if(z!=0 && z<depthCutoff){
                                        float vx = z * (u - cx) * fx_inv;
@@ -99,7 +100,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     cuda.memcpy_dtoh(points,points_gpu)
     cuda.memcpy_dtoh(count,count_gpu)
     
-    print("The total count is :",count)
+    print("Unique in count:",np.unique(count,return_counts=True))
     pcd_color=np.concatenate([points,rgb])
     pcd_color=pcd_color.reshape((640*480,6))
     pcds=pcd_color[pcd_color[:,0]!=0.0]
