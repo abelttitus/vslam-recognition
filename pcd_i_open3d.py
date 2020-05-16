@@ -39,7 +39,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     
     """
     rgb = cv2.imread(rgb_file)
-    rgb = cv2.normalize(rgb, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+    rgb=rgb.astype(np.uint8)
     depth =cv2.imread(depth_file)
     
     # if rgb.size != depth.size:
@@ -50,7 +50,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     #     raise Exception("Depth image is not in intensity format")
 
 
-    points=np.zeros((480,640,3),dtype=np.float64)
+    coords=np.zeros((480,640,3),dtype=np.float32)
     for u in range(rgb.shape[1]):
         for v in range(rgb.shape[0]):
             
@@ -58,18 +58,32 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
             if Z==0: continue
             X = (u - cx) * Z / fx
             Y = (v - cy) * Z / fy
-            points[v,u,0]=X
-            points[v,u,1]=Y
-            points[v,u,2]=Z
-    pcd_color=np.concatenate([points,rgb])
-    pcd_color=pcd_color.reshape((640*480,6))
-    pcds=pcd_color[pcd_color[:,0]!=0.0]
-    print("Pcd shape after removing:",pcds.shape)
-    pcd_o = o3d.geometry.PointCloud()
-    pcd_o.points=o3d.utility.Vector3dVector(pcds[:,:3])
-    pcd_o.colors=o3d.utility.Vector3dVector(pcds[:,3:])
-    o3d.io.write_point_cloud("/home/abel/vslam-recognition/gpu_test.ply", pcd_o)
-
+            coords[v,u,0]=X
+            coords[v,u,1]=Y
+            coords[v,u,2]=Z
+    
+    points=[] 
+    for u in range(rgb.shape[1]):
+        for v in range(rgb.shape[0]):
+            if coords[v,u,2]==0.0:
+                continue
+            points.append("%f %f %f %d %d %d 0\n"%(coords[v,u,0],coords[v,u,1],coords[v,u,2],rgb[v,u,0],rgb[v,u,1],rgb[v,u,2]))
+    
+    file = open(ply_file,"w")
+    file.write('''ply
+format ascii 1.0
+element vertex %d
+property float x
+property float y
+property float z
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+end_header
+%s
+'''%(len(points),"".join(points)))
+    file.close()
 
     
 
@@ -89,4 +103,4 @@ if __name__=='__main__':
     depth_path=base_dir+contents[1]
 
     
-    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_i_new.ply')
+    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_my.ply')
