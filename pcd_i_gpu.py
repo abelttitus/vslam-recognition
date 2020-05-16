@@ -55,8 +55,8 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     z=z.astype(np.float32)
     
     
-    if rgb.shape != depth.shape:
-        raise Exception("Color and depth image do not have the same resolution.")
+    # if rgb.shape != depth.shape:
+    #     raise Exception("Color and depth image do not have the same resolution.")
     # if rgb.mode != "RGB":
     #     raise Exception("Color image is not in RGB format")
     # if depth.mode != "I":
