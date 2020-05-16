@@ -84,7 +84,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                        float fy = -480.00f ;
                         float cx = 319.50f ;
                         float cy = 239.50f;
-                        float scalingFactor = 5000.0f;
+                        float scaling_factor = 5000.0f;
                        
                        if(u<cols && v<rows){
                                
