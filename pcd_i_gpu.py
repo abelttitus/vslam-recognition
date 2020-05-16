@@ -38,12 +38,12 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     ply_file -- filename of ply file
     
     """
+    start=time.time();
     rgb = cv2.imread(rgb_file)
-    rgb=rgb.astype(np.float64)
-    rgb = cv2.normalize(rgb, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-    print(np.max(rgb))
-    print(np.min(rgb))
+    rgb=rgb.astype(np.uint8)
+
     depth = cv2.imread(depth_file)
+    depth = depth[:,:,0]
     depth=depth.astype(np.float32)
     
     #coords
@@ -84,11 +84,11 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                        float fy = -480.00f ;
                         float cx = 319.50f ;
                         float cy = 239.50f;
-                        
+                        float sf=5000.0f;
                        
                        if(u<cols && v<rows){
                                
-                               float d= depth[u+cols*v];
+                               float d= depth[u+cols*v]/sf;
                                if(d!=0.0f){
                                        x[u+cols*v] =(u - cx) * d/ fx;
                                        y[u+cols*v]= (v - cy) * d / fy;
@@ -103,19 +103,32 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     cuda.memcpy_dtoh(y,y_gpu)
     cuda.memcpy_dtoh(z,z_gpu)
     
-    points=np.concatenate([x,y,z],axis=2)
-    points= points.astype(np.float64)
-    points=points/5000.0
-    print("Points shape",points.shape)
-    print("Points dtype:",points.dtype)
-    pcd_color=np.concatenate([points,rgb])
-    pcd_color=pcd_color.reshape((640*480,6))
-    pcds=pcd_color[pcd_color[:,0]!=0.0]
-    print("Pcd shape after removing:",pcds.shape)
-    pcd_o = o3d.geometry.PointCloud()
-    pcd_o.points=o3d.utility.Vector3dVector(pcds[:,:3])
-    pcd_o.colors=o3d.utility.Vector3dVector(pcds[:,3:])
-    o3d.io.write_point_cloud("/home/abel/vslam-recognition/gpu_2.ply", pcd_o)
+    coords=np.concatenate([x,y,z],axis=2)    
+    end=time.time()
+    print("Time taken to generate vmap:",end-start)
+    
+    points=[] 
+    for u in range(rgb.shape[1]):
+        for v in range(rgb.shape[0]):
+            if coords[v,u,2]==0.0:
+                continue
+            points.append("%f %f %f %d %d %d 0\n"%(coords[v,u,0],coords[v,u,1],coords[v,u,2],rgb[v,u,0],rgb[v,u,1],rgb[v,u,2]))
+    
+    file = open(ply_file,"w")
+    file.write('''ply
+format ascii 1.0
+element vertex %d
+property float x
+property float y
+property float z
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+end_header
+%s
+'''%(len(points),"".join(points)))
+    file.close()
 
 
 if __name__=='__main__':
@@ -132,8 +145,7 @@ if __name__=='__main__':
     img_path=base_dir+contents[3]
     depth_path=base_dir+contents[1]
 
-    start=time.time();
-    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_i_new.ply')
-    end=time.time()
     
-    print("Time taken to generate vmap:",end-start)
+    generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_i_newest.ply')
+   
+    
