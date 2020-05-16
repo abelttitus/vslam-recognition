@@ -39,6 +39,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     
     """
     rgb = cv2.imread(rgb_file)
+    rgb = cv2.normalize(rgb, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     depth =cv2.imread(depth_file)
     
     # if rgb.size != depth.size:
@@ -66,7 +67,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     print("Pcd shape after removing:",pcds.shape)
     pcd_o = o3d.geometry.PointCloud()
     pcd_o.points=o3d.utility.Vector3dVector(pcds[:,:3])
-    # pcd_o.colors=o3d.utility.Vector3dVector(pcds[:,3:])
+    pcd_o.colors=o3d.utility.Vector3dVector(pcds[:,3:])
     o3d.io.write_point_cloud("/home/abel/vslam-recognition/gpu_test.ply", pcd_o)
 
 
