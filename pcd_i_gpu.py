@@ -39,7 +39,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     
     """
     rgb = cv2.imread(rgb_file)
-    rgb=rgb.astype(np.float32)
+    rgb=rgb.astype(np.float64)
     rgb = cv2.normalize(rgb, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
     print(np.max(rgb))
     print(np.min(rgb))
@@ -84,11 +84,11 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                        float fy = -480.00f ;
                         float cx = 319.50f ;
                         float cy = 239.50f;
-                        float scaling_factor = 5000.0f;
+                        
                        
                        if(u<cols && v<rows){
                                
-                               float d= depth[u+cols*v]/scaling_factor;
+                               float d= depth[u+cols*v];
                                if(d!=0.0f){
                                        x[u+cols*v] =(u - cx) * d/ fx;
                                        y[u+cols*v]= (v - cy) * d / fy;
@@ -104,7 +104,10 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     cuda.memcpy_dtoh(z,z_gpu)
     
     points=np.concatenate([x,y,z],axis=2)
+    points.astype(np.float64)
+    points=points/5000.0
     print("Points shape",points.shape)
+    print("Points dtype:",points.dtype)
     pcd_color=np.concatenate([points,rgb])
     pcd_color=pcd_color.reshape((640*480,6))
     pcds=pcd_color[pcd_color[:,0]!=0.0]
