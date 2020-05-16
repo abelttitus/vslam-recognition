@@ -107,6 +107,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     pcd_color=np.concatenate([points,rgb])
     pcd_color=pcd_color.reshape((640*480,6))
     pcds=pcd_color[pcd_color[:,0]!=0.0]
+    print("Pcd shape after removing:",pcds.shape)
     pcd_o = o3d.geometry.PointCloud()
     pcd_o.points=o3d.utility.Vector3dVector(pcds[:,:3])
     pcd_o.colors=o3d.utility.Vector3dVector(pcds[:,3:])
