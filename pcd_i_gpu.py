@@ -86,9 +86,9 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
                                         float vy = z * (v - cy) * fy_inv;
                                         float vz = z;
                                        
-                                        points[u+cols*v]=vx;
-                                        points[u+cols*v+1]=vy;
-                                        points[u+cols*v+2]=vz;
+                                        points[u+cols*v]=1.0;
+                                        points[u+cols*v+1]=2.0;
+                                        points[u+cols*v+2]=3.0;
                                         
                                         
                                }
@@ -100,7 +100,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     cuda.memcpy_dtoh(points,points_gpu)
     cuda.memcpy_dtoh(count,count_gpu)
     
-    print("Unique in count:",np.unique(count,return_counts=True))
+    print("Random values in points along z axis",points[40,50,:],points[32,90,:])
     pcd_color=np.concatenate([points,rgb])
     pcd_color=pcd_color.reshape((640*480,6))
     pcds=pcd_color[pcd_color[:,0]!=0.0]
