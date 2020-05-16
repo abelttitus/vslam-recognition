@@ -53,7 +53,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     for u in range(rgb.shape[1]):
         for v in range(rgb.shape[0]):
             
-            Z = depth[v,u] / scalingFactor
+            Z = depth[v,u,0] / scalingFactor
             if Z==0: continue
             X = (u - cx) * Z / fx
             Y = (v - cy) * Z / fy
