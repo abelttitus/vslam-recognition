@@ -38,28 +38,28 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     ply_file -- filename of ply file
     
     """
-    rgb = Image.open(rgb_file)
-    depth = Image.open(depth_file)
+    rgb = cv2.imread(rgb_file)
+    depth =cv2.imread(depth_file)
     
-    if rgb.size != depth.size:
-        raise Exception("Color and depth image do not have the same resolution.")
-    if rgb.mode != "RGB":
-        raise Exception("Color image is not in RGB format")
-    if depth.mode != "I":
-        raise Exception("Depth image is not in intensity format")
+    # if rgb.size != depth.size:
+    #     raise Exception("Color and depth image do not have the same resolution.")
+    # if rgb.mode != "RGB":
+    #     raise Exception("Color image is not in RGB format")
+    # if depth.mode != "I":
+    #     raise Exception("Depth image is not in intensity format")
 
 
     points=np.zeros((480,640,3),dtype=np.float64)
-    for v in range(rgb.size[1]):
-        for u in range(rgb.size[0]):
-            color = rgb.getpixel((u,v))
-            Z = depth.getpixel((u,v)) / scalingFactor
+    for u in range(rgb.shape[1]):
+        for v in range(rgb.shape[0]):
+            
+            Z = depth[v,u] / scalingFactor
             if Z==0: continue
             X = (u - cx) * Z / fx
             Y = (v - cy) * Z / fy
-            points[u,v,0]=X
-            points[u,v,1]=Y
-            points[u,v,2]=Z
+            points[v,u,0]=X
+            points[v,u,1]=Y
+            points[v,u,2]=Z
     pcd_color=np.concatenate([points,rgb])
     pcd_color=pcd_color.reshape((640*480,6))
     pcds=pcd_color[pcd_color[:,0]!=0.0]
