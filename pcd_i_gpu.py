@@ -47,11 +47,11 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     depth=depth.astype(np.float32)
     
     #coords
-    x=np.zeros((depth.shape[0],depth.shape[1],3))
+    x=np.zeros((depth.shape[0],depth.shape[1]))
     x=x.astype(np.float32)
-    y=np.zeros((depth.shape[0],depth.shape[1],3))
+    y=np.zeros((depth.shape[0],depth.shape[1]))
     y=y.astype(np.float32)
-    z=np.zeros((depth.shape[0],depth.shape[1],3))
+    z=np.zeros((depth.shape[0],depth.shape[1]))
     z=z.astype(np.float32)
     
     
