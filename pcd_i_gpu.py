@@ -104,7 +104,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     cuda.memcpy_dtoh(z,z_gpu)
     
     points=np.concatenate([x,y,z],axis=2)
-    points.astype(np.float64)
+    points= points.astype(np.float64)
     points=points/5000.0
     print("Points shape",points.shape)
     print("Points dtype:",points.dtype)
