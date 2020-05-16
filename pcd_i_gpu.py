@@ -103,7 +103,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
     cuda.memcpy_dtoh(y,y_gpu)
     cuda.memcpy_dtoh(z,z_gpu)
     
-    points=np.concatenate([x,y,z],axis=2)
+    points=np.concatenate([x,y,z],axis=1)
     print("Random values in points along z axis",points[40,50,:],points[32,90,:])
     pcd_color=np.concatenate([points,rgb])
     pcd_color=pcd_color.reshape((640*480,6))
