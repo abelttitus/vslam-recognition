@@ -59,7 +59,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
             coords[v,u,1]=Y
             coords[v,u,2]=Z
        
-    normals=np.zeros((480,640,3),dtype=np.float32)
+    n_map=np.zeros((480,640,3),dtype=np.float32)
     for u in range(cols):
         for v in range(rows):
             if(u==cols-1 or v==rows-1):
@@ -76,18 +76,16 @@ def generate_pointcloud(rgb_file,depth_file,ply_file):
             q=v10-v00
             norm=np.cross(p,q)
             norm=norm/np.linalg.norm(norm)
-            normals[v,u,:]=norm
+            n_map[v,u,:]=norm
             
-    normals=(normals-np.max(normals))/(np.max(normals)-np.min(normals)) 
-    normals=normals*255.0
-    normals=normals.astype(np.uint8)       
+        
     
     points=[] 
     for u in range(cols):
         for v in range(rows):
-            if coords[v,u,2]==0.0 or normals[v,u,0]==0:
+            if coords[v,u,2]==0.0 or n_map[v,u,0]==0:
                 continue
-            points.append("%f %f %f %d %d %d 0\n"%(coords[v,u,0],coords[v,u,1],coords[v,u,2],normals[v,u,0],normals[v,u,1],normals[v,u,2]))
+            points.append("%f %f %f %d %d %d 0\n"%(coords[v,u,0],coords[v,u,1],coords[v,u,2],n_map[v,u,0],n_map[v,u,1],n_map[v,u,2]))
     
     file = open(ply_file,"w")
     file.write('''ply
