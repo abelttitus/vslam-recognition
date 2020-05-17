@@ -79,8 +79,10 @@ if __name__=='__main__':
                 print("File (RGB)",contents[3])
             
             img_no=int(contents[0])
+            if(img_no==3):
+                break
             base_dir='/home/abel/dataset/'
             img_path=base_dir+contents[3]
             depth_path=base_dir+contents[1]
-    
             generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/ply/pcd_i_'+str(img_no)+'.ply')
+            
