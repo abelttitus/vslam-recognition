@@ -84,6 +84,6 @@ if __name__=='__main__':
             img_path=base_dir+contents[3]
             depth_path=base_dir+contents[1]
             img_no=int(contents[0])
-            if img_no==50:
+            if img_no==75 or img_no==95:
                 generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/ply/pcd_i_'+str(img_no)+'.ply')
             
