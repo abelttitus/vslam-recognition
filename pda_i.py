@@ -122,4 +122,4 @@ if __name__=='__main__':
         
             if img_no<3 and img_no!=0:
                 generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_my_norm.ply',img_no)
-                print(img_no)
+                print("Gen vmap and nmap of",img_no)
