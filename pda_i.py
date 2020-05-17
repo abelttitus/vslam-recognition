@@ -107,7 +107,7 @@ def generate_pointcloud(rgb_file,depth_file,ply_file,img_no):
 
 
 if __name__=='__main__':
-    verbose=True;
+    verbose=False;
     with open('/home/abel/dataset/associations.txt') as file: 
         for line in file:
             contents=line.split()
@@ -121,5 +121,9 @@ if __name__=='__main__':
             depth_path=base_dir+contents[1]
         
             if img_no<3 and img_no!=0:
+                print("Generating vmap and nmap of",img_no)
                 generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_my_norm.ply',img_no)
-                print("Gen vmap and nmap of",img_no)
+                
+            
+            if img_no>2:
+                break
