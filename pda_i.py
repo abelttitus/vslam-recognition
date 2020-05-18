@@ -121,7 +121,7 @@ if __name__=='__main__':
             img_path=base_dir+contents[3]
             depth_path=base_dir+contents[1]
         
-            if img_no==30:
+            if img_no==60:
                 print("Generating vmap and nmap of",img_no)
                 generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_my_norm.ply',img_no)
                 break

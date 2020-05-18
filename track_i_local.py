@@ -24,9 +24,9 @@ def pcd_transform(trans,points):
     return np.transpose(p_t)[:,:3]
 
 
-vmap_src=np.load('/home/abel/vslam-recognition/np/v_map5.npy')
+vmap_src=np.load('/home/abel/vslam-recognition/np/v_map30.npy')
 vmap_dst=np.load('/home/abel/vslam-recognition/np/v_map1.npy')
-nmap_src=np.load('/home/abel/vslam-recognition/np/n_map5.npy')
+nmap_src=np.load('/home/abel/vslam-recognition/np/n_map30.npy')
 nmap_dst=np.load('/home/abel/vslam-recognition/np/n_map1.npy')
 
 
