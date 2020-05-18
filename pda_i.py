@@ -32,7 +32,8 @@ def generate_pointcloud(rgb_file,depth_file,ply_file,img_no):
     rgb = cv2.imread(rgb_file)
     rgb=rgb.astype(np.uint8)
     depth =cv2.imread(depth_file)
-    
+    print(rgb_file)
+    print(depth_file)
     # if rgb.size != depth.size:
     #     raise Exception("Color and depth image do not have the same resolution.")
     # if rgb.mode != "RGB":
@@ -120,10 +121,8 @@ if __name__=='__main__':
             img_path=base_dir+contents[3]
             depth_path=base_dir+contents[1]
         
-            if img_no==5:
+            if img_no==30:
                 print("Generating vmap and nmap of",img_no)
                 generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_my_norm.ply',img_no)
-                
-            
-            if img_no>5:
                 break
+            

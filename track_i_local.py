@@ -24,9 +24,9 @@ def pcd_transform(trans,points):
     return np.transpose(p_t)[:,:3]
 
 
-vmap_src=np.load('/home/abel/vslam-recognition/np/v_map2.npy')
+vmap_src=np.load('/home/abel/vslam-recognition/np/v_map5.npy')
 vmap_dst=np.load('/home/abel/vslam-recognition/np/v_map1.npy')
-nmap_src=np.load('/home/abel/vslam-recognition/np/n_map2.npy')
+nmap_src=np.load('/home/abel/vslam-recognition/np/n_map5.npy')
 nmap_dst=np.load('/home/abel/vslam-recognition/np/n_map1.npy')
 
 
@@ -46,8 +46,9 @@ angle_thresh=np.sin(20. * 3.14159254 / 180.)
 dist_thresh=0.10
 init_pose=np.identity(4)
 
-count=0
-
+counter_1=0
+counter_2=0
+counter_3=0
 
 u=50
 v=40
@@ -71,9 +72,16 @@ for u in range(cols):
             angle=np.linalg.norm(np.cross(n_src_in_dst,n_dst))
             dist=np.linalg.norm(v_src_in_dst-v_dst)
             
-            if angle<angle_thresh and dist<dist_thresh and np.linalg.norm(n_src)!=0 and np.linalg.norm(n_dst)!=0 and v_src.all()!=v_dst.all():
-                count+=1
-                print(u,v)
+            if angle>angle_thresh and dist>dist_thresh:
+                counter_1+=1
+             
+            if np.linalg.norm(n_src)==0 and np.linalg.norm(n_dst)==0:
+                counter_2+=1
+                
+            if v_src.all()==v_dst.all():
+                counter_3+=1
                     
-print("No of Correspondances found:",count)
+print("counter_1",counter_1)
+print("counter_2",counter_2)
+print("counter_3",counter_3)
                 
