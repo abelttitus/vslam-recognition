@@ -120,10 +120,10 @@ if __name__=='__main__':
             img_path=base_dir+contents[3]
             depth_path=base_dir+contents[1]
         
-            if img_no<3 and img_no!=0:
+            if img_no==5:
                 print("Generating vmap and nmap of",img_no)
                 generate_pointcloud(img_path,depth_path,'/home/abel/vslam-recognition/pcd_my_norm.ply',img_no)
                 
             
-            if img_no>2:
+            if img_no>5:
                 break
