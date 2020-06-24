@@ -39,7 +39,14 @@ pose_2=np.array([[-0.999738,-0.000418,-0.022848,1.370020],[
 -0.000464,0.999998,0.002027,1.526344],[
 0.022848,0.002037,-0.999737,1.448990],
     [0.0,0.0,0.0,1.0]])
-    
+
+pose_5=np.array([[-0.999756,0.002480,-0.021929,1.369543],
+[0.002342, 0.999977, 0.006301 ,1.520461],
+[0.021944,0.006248,-0.999739,1.449601],
+[0.0,0.0,0.0,1.0]])
+
+
+
 cols=640
 rows=480
 angle_thresh=np.sin(20. * 3.14159254 / 180.)
@@ -52,6 +59,9 @@ counter_3=0
 
 u=50
 v=40
+
+valid=np.zeros((480,640),dtype=np.bool)
+vmap_corres=np.zeros((480,640,3))
 
 for u in range(cols):
     for v in range(rows):
@@ -72,16 +82,20 @@ for u in range(cols):
             angle=np.linalg.norm(np.cross(n_src_in_dst,n_dst))
             dist=np.linalg.norm(v_src_in_dst-v_dst)
             
-            if angle>angle_thresh and dist>dist_thresh:
-                counter_1+=1
-             
-            if np.linalg.norm(n_src)==0 and np.linalg.norm(n_dst)==0:
-                counter_2+=1
+            if angle<angle_thresh and dist<dist_thresh and np.linalg.norm(n_src)!=0 and np.linalg.norm(n_dst)!=0 and not (v_src==v_dst).all():
+                vmap_corres[v,u,:]=v_dst
+                valid[v,u]=True
+
                 
-            if v_src.all()==v_dst.all():
-                counter_3+=1
+                
                     
-print("counter_1",counter_1)
-print("counter_2",counter_2)
-print("counter_3",counter_3)
+vmap_src_resh=np.reshape(vmap_src,(640*480,3))
+vmap_corres_resh=np.reshape(vmap_corres,(640*480,3))
+valid=np.reshape(valid,(640*480,))
+vmap_src_valid=vmap_src_resh[valid]
+vmap_corres_valid=vmap_corres_resh[valid]
+T=icp(vmap_src_valid,vmap_corres_valid)
+
+
+
                 
